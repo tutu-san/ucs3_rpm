@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "user_code.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +67,28 @@ static void MX_TIM8_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+encoder_tool encoders_amt_102[4] = {
+  encoder_tool(&htim4, 512.0f, 1.0f),
+  encoder_tool(&htim8, 512.0f, 1.0f),
+  encoder_tool(&htim3, 512.0f, 1.0f),
+  encoder_tool(&htim5, 512.0f, 1.0f)
+};
+pid_control pid[4] = {
+  pid_control(0.0f, 0.0f),
+  pid_control(0.0f, 0.0f),
+  pid_control(0.0f, 0.0f),
+  pid_control(0.0f, 0.0f)
 
+};
+motor_rotation motors[4] = {
+  motor_rotation(DIRECTION1_GPIO_Port, DIRECTION1_Pin, &htim1, TIM_CHANNEL_1, false),
+  motor_rotation(DIRECTION2_GPIO_Port, DIRECTION2_Pin, &htim1, TIM_CHANNEL_2, false),
+  motor_rotation(DIRECTION3_GPIO_Port, DIRECTION3_Pin, &htim1, TIM_CHANNEL_3, false),
+  motor_rotation(DIRECTION4_GPIO_Port, DIRECTION4_Pin, &htim1, TIM_CHANNEL_4, false)
+};
+
+uint32_t can1_rx_id;
+uint8_t can1_rx_data[8];
 /* USER CODE END 0 */
 
 /**
@@ -105,13 +126,19 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
-
+  setup();
+  uint32_t tickstart = 0, while_loop_time = 10; //loop timer (ms)
+  HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    if( !((HAL_GetTick() - tickstart) < while_loop_time) ){
+		  tickstart = HAL_GetTick();
+		  loop();
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -545,7 +572,18 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+//CAN割り込み
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
+  CAN_RxHeaderTypeDef RxHeader;
+  uint8_t RxData[8];
+  if(HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK) {
+    can1_rx_id = ((RxHeader.IDE == CAN_ID_STD) ? RxHeader.StdId : RxHeader.ExtId);// ID
+    for(int i = 0; i < 8; i++){
+      can1_rx_data[i] = RxData[i];
+    }
+    can1_receive_process();
+  }
+}
 /* USER CODE END 4 */
 
 /**
