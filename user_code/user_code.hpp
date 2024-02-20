@@ -2,6 +2,7 @@
 #ifndef USER_CODE_HPP
 #define USER_CODE_HPP
 //includes
+#include <main.h>
 #include <cstdint>
 #include "stm32f4xx_hal.h"
 #include "lib/pi_ctrl.hpp"
@@ -24,6 +25,8 @@ extern encoder_tool encoders_amt_102[4];
 extern pid_control pid [4];
 extern motor_rotation motors[4];
 
+extern float motor_pwm[4];
+
 //functions
 void setup();
 void loop();
@@ -35,5 +38,6 @@ int pcdata_to_rpm(uint8_t, uint8_t);
 
 void pwm_setup();
 void encoder_setup();
+void motor_brake_off();
 
 #endif

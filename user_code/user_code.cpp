@@ -3,12 +3,16 @@
 void setup(){
     can_setup();
     pwm_setup();
+    motor_brake_off();
     encoder_setup();
 }
 
 void loop(){
+	for(int i=0; i<4; i++){
+		pid[i].update_target_speed(300.0f);
+	}
     for(int i=0; i<4; i++){
-        float motor_pwm[4] = {0,0,0,0};
+
         motor_pwm[i] = pid[i].motor_calc(encoders_amt_102[i].read_rpm());
         motors[i].rotate(motor_pwm[i]);
         encoders_amt_102[i].reset_encoder_data();
@@ -78,4 +82,11 @@ void encoder_setup(){
 	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
 
+}
+
+void motor_brake_off(){
+	HAL_GPIO_WritePin(MD_EN1_GPIO_Port, MD_EN1_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(MD_EN2_GPIO_Port, MD_EN2_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(MD_EN3_GPIO_Port, MD_EN3_Pin, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(MD_EN4_GPIO_Port, MD_EN4_Pin, GPIO_PIN_SET);
 }

@@ -9,14 +9,14 @@ float pid_control::pi_calc(float current_speed){
     //計算
     error = current_target_speed - current_speed;
     integral += error * DELTA_T;
-    pid_control::clamp(integral, -10000.0f, 10000.0f); //値は適当(どのくらいがいいのかわからない)
+    pid_control::clamp(integral, -15000.0f, 15000.0f); //値は適当(どのくらいがいいのかわからない)
 
     //PIの各成分を出す
     result_p = gain_p * error;
     result_i = gain_i * integral;
 
     pi_result = result_p + result_i;
-    pid_control::clamp(pi_result, -14000.0f, 14000.0f);
+    pid_control::clamp(pi_result, -60000.0f, 60000.0f);
     return pi_result;
 }
 
