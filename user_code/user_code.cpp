@@ -2,6 +2,8 @@
 /*main_functions*/
 void setup(){
     can_setup();
+    pwm_setup();
+    encoder_setup();
 }
 
 void loop(){
@@ -39,7 +41,7 @@ void can1_receive_process(){
     	rpm_data_from_pc[0] = pcdata_to_rpm(can1_rx_data[0], can1_rx_data[1]);
     	rpm_data_from_pc[1] = pcdata_to_rpm(can1_rx_data[2], can1_rx_data[3]);
     	rpm_data_from_pc[2] = pcdata_to_rpm(can1_rx_data[4], can1_rx_data[5]);
-        rpm_data_from_pc[3] = pcdata_to_rpm(can1_rx_data[5], can1_rx_data[6]);
+    	rpm_data_from_pc[3] = pcdata_to_rpm(can1_rx_data[5], can1_rx_data[6]);
         for(int i=0; i<4; i++){
         	pid[i].update_target_speed((float)rpm_data_from_pc[i]);
         }
@@ -55,4 +57,25 @@ int pcdata_to_rpm(uint8_t pc_input_data_high, uint8_t pc_input_data_low){
 
     //おしまい
     return signed_rpm_data;
+}
+
+/*timer_setup*/
+void pwm_setup(){
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+	HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
+
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 0);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 0);
+	__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);
+}
+
+void encoder_setup(){
+	HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
+
 }

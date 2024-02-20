@@ -11,6 +11,12 @@
 //(extern) variables, classes
 extern CAN_HandleTypeDef hcan1;
 
+extern TIM_HandleTypeDef htim1;
+extern TIM_HandleTypeDef htim4;
+extern TIM_HandleTypeDef htim8;
+extern TIM_HandleTypeDef htim3;
+extern TIM_HandleTypeDef htim5;
+
 extern uint32_t can1_rx_id;
 extern uint8_t can1_rx_data[8];
 
@@ -26,5 +32,8 @@ void can_setup();
 void can1_receive_process();
 
 int pcdata_to_rpm(uint8_t, uint8_t);
+
+void pwm_setup();
+void encoder_setup();
 
 #endif

@@ -73,6 +73,7 @@ encoder_tool encoders_amt_102[4] = {
   encoder_tool(&htim3, 512.0f, 1.0f),
   encoder_tool(&htim5, 512.0f, 1.0f)
 };
+
 pid_control pid[4] = {
   pid_control(0.0f, 0.0f),
   pid_control(0.0f, 0.0f),
@@ -125,7 +126,7 @@ int main(void)
   MX_TIM4_Init();
   MX_TIM5_Init();
   MX_TIM8_Init();
-  /* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN 2 */\
   setup();
   uint32_t tickstart = 0, while_loop_time = 10; //loop timer (ms)
   HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, GPIO_PIN_SET);
@@ -138,7 +139,7 @@ int main(void)
     if( !((HAL_GetTick() - tickstart) < while_loop_time) ){
 		  tickstart = HAL_GetTick();
 		  loop();
-	  }
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

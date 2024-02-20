@@ -22,10 +22,8 @@ private:
 	bool motor_exception;
 	void clamp(float&, float, float);
 public:
-    motor_rotation(GPIO_TypeDef* _gpio_port, uint16_t _gpio_pin, TIM_HandleTypeDef* _tim_handle, uint32_t _tim_channel, bool _motor_exception):gpio_port(_gpio_port),gpio_pin(_gpio_pin),tim_handle(_tim_handle), tim_channel(_tim_channel), motor_exception(_motor_exception){
-		HAL_TIM_PWM_Start(tim_handle, tim_channel);
-		__HAL_TIM_SET_COMPARE(tim_handle, tim_channel, 0);
-	}
+    motor_rotation(GPIO_TypeDef* _gpio_port, uint16_t _gpio_pin, TIM_HandleTypeDef* _tim_handle, uint32_t _tim_channel, bool _motor_exception)
+    	:gpio_port(_gpio_port),gpio_pin(_gpio_pin),tim_handle(_tim_handle), tim_channel(_tim_channel), motor_exception(_motor_exception){}
     void rotate(float);
 };
 #endif
